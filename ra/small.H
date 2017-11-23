@@ -233,8 +233,7 @@ struct SmallBase
     }                                                                   \
     constexpr decltype(auto) operator[](dim_t const i) CONST            \
     {                                                                   \
-        static_assert(rank()==1, "bad rank");                           \
-        return data()[i*mp::Ref_<strides, 0>::value];                   \
+        return (*this)(i);                                              \
     }
     SUBSCRIPTS(const)
     SUBSCRIPTS(/*const*/)
