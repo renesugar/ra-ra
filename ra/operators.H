@@ -449,7 +449,7 @@ gemv(A const & a, B const & b)
 #undef START
 
 // TODO adjust type for var rank/var size/fixed size. Check temporary.H.
-template <class X> auto make_array(X && x) { return ra::Owned<ra::value_t<X>, decltype(start(x))::rank_s()>(x); }
+template <class X> auto make_array(X && x) { return ra::Big<ra::value_t<X>, decltype(start(x))::rank_s()>(x); }
 
 } // namespace ra
 

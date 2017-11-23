@@ -254,7 +254,7 @@ Here is a minimal program:
 
 int main()
 {
-    ra::Owned<char, 2> A({2, 5}, "helloworld");
+    ra::Big<char, 2> A({2, 5}, "helloworld");
     std::cout << format_array(transpose<1, 0>(A), false, "|") << std::endl;
 }
 @end verbatim
@@ -282,8 +282,8 @@ For example:
 @verbatim
 {
     ra::Small<double, 2, 3> a(0.);       // a fixed size 2x3 array
-    ra::Owned<double, 2> b({2, 3}, 0.);  // a dynamic size 2x3 array
-    ra::Owned<double> c({2, 3}, 0.);     // a dynamic rank 2x3 array
+    ra::Big<double, 2> b({2, 3}, 0.);  // a dynamic size 2x3 array
+    ra::Big<double> c({2, 3}, 0.);     // a dynamic rank 2x3 array
     // a, b, c destroyed at end of scope
 }
 @end verbatim
@@ -297,8 +297,8 @@ Container constructors come in two main forms. The first takes a single argument
 @verbatim
 ra::Small<double, 2, 3> a = 0.;  // 0. is copied into a
 ra::Small<double, 2, 3> b = a;   // the contents of a are copied into b
-ra::Owned<double> c = a;         // c takes the size of a and a is copied into c
-ra::Owned<double> d = 0.;        // d is a 0-array with one element d()==0.
+ra::Big<double> c = a;         // c takes the size of a and a is copied into c
+ra::Big<double> d = 0.;        // d is a 0-array with one element d()==0.
 @end verbatim
 @end example
 
@@ -306,8 +306,8 @@ The second form takes two arguments, one giving the shape, the second the conten
 
 @example
 @verbatim
-ra::Owned<double, 2> a({2, 3}, 1.);  // a has size 2x3 and be filled with 1.
-ra::Owned<double> b({2, 3}, a);      // b has size 2x3 and a is copied into b
+ra::Big<double, 2> a({2, 3}, 1.);  // a has size 2x3 and be filled with 1.
+ra::Big<double> b({2, 3}, a);      // b has size 2x3 and a is copied into b
 @end verbatim
 @end example
 
@@ -318,13 +318,13 @@ Finally, there are special constructors where the content argument is either a p
 @cindex order, column-major
 @example
 @verbatim
-ra::Owned<double, 2> a({2, 3}, {1, 2, 3, 4, 5, 6}); // {{1, 2, 3}, {4, 5, 6}}
+ra::Big<double, 2> a({2, 3}, {1, 2, 3, 4, 5, 6}); // {{1, 2, 3}, {4, 5, 6}}
 
 double bx[6] = {1, 2, 3, 4, 5, 6}
-ra::Owned<double, 2> b({3, 2}, bx); // {{1, 2}, {3, 4}, {5, 6}}
+ra::Big<double, 2> b({3, 2}, bx); // {{1, 2}, {3, 4}, {5, 6}}
 
 double cx[4] = {1, 2, 3, 4}
-ra::Owned<double, 2> c({3, 2}, cx); // *** WHO NOSE ***
+ra::Big<double, 2> c({3, 2}, cx); // *** WHO NOSE ***
 
 using sizes = mp::int_list<2, 3>;
 using strides = mp::int_list<1, 2>;
@@ -337,8 +337,8 @@ Sometimes the pointer constructor gets in the way (see @ref{x-scalar,@code{scala
 
 @example
 @verbatim
-ra::Owned<char const *, 1> A({3}, "hello"); // error: try to convert char to char const *
-ra::Owned<char const *, 1> A({3}, ra::scalar("hello")); // ok, "hello" is a single item
+ra::Big<char const *, 1> A({3}, "hello"); // error: try to convert char to char const *
+ra::Big<char const *, 1> A({3}, ra::scalar("hello")); // ok, "hello" is a single item
 std::cout << format_array(A, false, "|") << std::endl;
 @end verbatim
 @print{} hello|hello|hello
@@ -349,7 +349,7 @@ A @dfn{view} is similar to a container in that it points to actual data in memor
 
 @example
 @verbatim
-ra::Owned<double> c({2, 3}, 0.);     // a dynamic rank 2x3 array
+ra::Big<double> c({2, 3}, 0.);     // a dynamic rank 2x3 array
 {
     auto c1 = c(1);                  // the first row of array c
     // c1 is destroyed here
@@ -362,7 +362,7 @@ The data accessed through a view is the data of the `root' container, so modifyi
 
 @example
 @verbatim
-ra::Owned<double> c({2, 3}, 0.);
+ra::Big<double> c({2, 3}, 0.);
 auto c1 = c(1);
 c1(2) = 9.;                      // c(1, 2) = 9.
 @end verbatim
@@ -372,7 +372,7 @@ Just as for containers, there are separate types of views depending on whether t
 
 @example
 @verbatim
-ra::Owned<double> c({2, 3}, {1, 2, 3, 4, 5, 6});
+ra::Big<double> c({2, 3}, {1, 2, 3, 4, 5, 6});
 auto ct = transpose<1, 0>(c); // {{1, 4}, {2, 5}, {3, 6}}
 auto cr = reverse(c, 0); // {{4, 5, 6}, {1, 2, 3}}
 @end verbatim
@@ -396,7 +396,7 @@ void f(ra::View<int, 3> & v);
 @end verbatim
 @end example
 
-you may pass it an object of type @code{ra::Owned<int, 3>}.
+you may pass it an object of type @code{ra::Big<int, 3>}.
 
 
 @c ------------------------------------------------
@@ -522,8 +522,8 @@ x += a; // sum the rows of a
 
 @example
 @verbatim
-ra::Owned<double, 3> a({5, 3, 3}, ra::_0);
-ra::Owned<double, 2> b({5}, 0.);
+ra::Big<double, 3> a({5, 3, 3}, ra::_0);
+ra::Big<double, 2> b({5}, 0.);
 b += transpose<0, 1, 1>(a); // b(i) = ∑ⱼ a(i, j, j)
 @end verbatim
 @result{} b = @{0, 3, 6, 9, 12@}
@@ -546,7 +546,7 @@ Singleton broadcasting still isn't entirely general, since it doesn't handle tra
 
 @example
 @verbatim
-ra::Owned<double, 3> a({5, 4, 3}, ra::_0);
+ra::Big<double, 3> a({5, 4, 3}, ra::_0);
 for_each([](auto && b) { /* b has shape (5 4 3) */ }, iter<3>(a));
 for_each([](auto && b) { /* b has shape (4 3) */ }, iter<2>(a));
 for_each([](auto && b) { /* b has shape (3) */ }, iter<1>(a));
@@ -569,9 +569,9 @@ In this way it is possible to match shapes in various ways. Compare
 
 @example
 @verbatim
-ra::Owned<double, 2> a({2, 3}, {1, 2, 3,  4, 5, 6});
-ra::Owned<double, 2> b({2}, {10, 20});
-ra::Owned<double, 2> c = a * b; // multiply (each item of a) by (each item of b)
+ra::Big<double, 2> a({2, 3}, {1, 2, 3,  4, 5, 6});
+ra::Big<double, 2> b({2}, {10, 20});
+ra::Big<double, 2> c = a * b; // multiply (each item of a) by (each item of b)
 @end verbatim
 @result{} a = @{@{10, 20, 30@}, @{80, 100, 120@}@}
 @end example
@@ -580,15 +580,15 @@ with
 
 @example @c [ma105]
 @verbatim
-ra::Owned<double, 2> a({2, 3}, {1, 2, 3,  4, 5, 6});
-ra::Owned<double, 2> b({3}, {10, 20, 30});
-ra::Owned<double, 2> c({2, 3}, 0.);
+ra::Big<double, 2> a({2, 3}, {1, 2, 3,  4, 5, 6});
+ra::Big<double, 2> b({3}, {10, 20, 30});
+ra::Big<double, 2> c({2, 3}, 0.);
 iter<1>(c) = iter<1>(a) * iter<1>(b); // multiply (each item of a) by (b)
 @end verbatim
 @result{} a = @{@{10, 40, 90@}, @{40, 100, 180@}@}
 @end example
 
-Note that in this case we cannot construct @code{c} directly from @code{iter<1>(a) * iter<1>(b)}, since the constructor for @code{ra::Owned} matches its argument using (the equivalent of) @code{iter<0>(*this)}. See @ref{x-iter,@code{iter}} for more examples.
+Note that in this case we cannot construct @code{c} directly from @code{iter<1>(a) * iter<1>(b)}, since the constructor for @code{ra::Big} matches its argument using (the equivalent of) @code{iter<0>(*this)}. See @ref{x-iter,@code{iter}} for more examples.
 
 Cell iteration is best used when the operations take naturally operands of rank > 0; for instance, the operation `determinant of a matrix' is naturally of rank 2. When the operation is of rank 0, such as @code{*} above, there may be faster ways to rearrange shapes for matching (@pxref{The rank conjunction}).
 
@@ -605,8 +605,8 @@ The form of the scripting operator @code{A(i₀, i₁, ...)} makes it plain that
 
 @example
 @verbatim
-ra::Owned<double, 1> a = {1., 2., 3., 4.};
-ra::Owned<int, 1> i = {1, 3};
+ra::Big<double, 1> a = {1., 2., 3., 4.};
+ra::Big<int, 1> i = {1, 3};
 map(a, i) = 77.;
 @end verbatim
 @result{} a = @{1., 77., 3, 77.@}
@@ -616,16 +616,16 @@ Just as with any use of @code{map}, array arguments are subject to the prefix ag
 
 @example
 @verbatim
-ra::Owned<double, 2> a({2, 2}, {1., 2., 3., 4.});
-ra::Owned<int, 1> i = {1, 0};
-ra::Owned<double, 1> b = map(a, i, 0);
+ra::Big<double, 2> a({2, 2}, {1., 2., 3., 4.});
+ra::Big<int, 1> i = {1, 0};
+ra::Big<double, 1> b = map(a, i, 0);
 @end verbatim
 @result{} b = @{3., 1.@} // @{a(1, 0), a(0, 0)@}
 @end example
 
 @example
 @verbatim
-ra::Owned<int, 1> j = {0, 1};
+ra::Big<int, 1> j = {0, 1};
 b = map(a, i, j);
 @end verbatim
 @result{} b = @{3., 2.@} // @{a(1, 0), a(0, 1)@}
@@ -638,11 +638,11 @@ Most array operations (e.g. @code{+}) are defined through @code{map} in this way
 
 @example
 @verbatim
-ra::Owned<double, 2> A({2, 2}, {1., 2., 3., 4.});
-ra::Owned<int, 1> i = {1, 0};
-ra::Owned<int, 1> j = {0, 1};
+ra::Big<double, 2> A({2, 2}, {1., 2., 3., 4.});
+ra::Big<int, 1> i = {1, 0};
+ra::Big<int, 1> j = {0, 1};
 // {{A(i₀, j₀), A(i₀, j₁)}, {A(i₁, j₀), A(i₁, j₁)}}
-ra::Owned<double, 2> b = A(i, j);
+ra::Big<double, 2> b = A(i, j);
 @end verbatim
 @result{} b = @{@{3., 4.@}, @{1., 2.@}@}
 @end example
@@ -661,7 +661,7 @@ This can used anywhere an array expression is expected.
 
 @example
 @verbatim
-ra::Owned<int, 1> a = ra::iota(4, 3 -2);
+ra::Big<int, 1> a = ra::iota(4, 3 -2);
 @end verbatim
 @result{} a = @{3, 1, -1, -3@}
 @end example
@@ -669,7 +669,7 @@ ra::Owned<int, 1> a = ra::iota(4, 3 -2);
 Here, @code{b} and @code{c} are @code{View}s (@pxref{Containers and views}).
 @example
 @verbatim
-ra::Owned<int, 1> a = {1, 2, 3, 4, 5, 6};
+ra::Big<int, 1> a = {1, 2, 3, 4, 5, 6};
 auto b = a(iota(3));
 auto c = a(iota(3, 3));
 @end verbatim
@@ -685,7 +685,7 @@ This object cannot stand alone as an array expression. All the examples below re
 
 @example
 @verbatim
-ra::Owned<int, 2> a({3, 2}, {1, 2, 3, 4, 5, 6});
+ra::Big<int, 2> a({3, 2}, {1, 2, 3, 4, 5, 6});
 auto b = a(ra::all, ra::all); // (1) a view of the whole of a
 auto c = a(iota(3), iota(2)); // same as (1)
 auto d = a(iota(3), ra::all); // same as (1)
@@ -725,7 +725,7 @@ This object cannot stand alone as an array expression. All the examples below re
 @example
 @verbatim
 auto h = a(newaxis<0>); // same as (1)
-auto i = a(newaxis<1>); // same contents as ra::Owned<int, 2> a({1, 3, 2}, {1, 2, 3, 4, 5, 6})
+auto i = a(newaxis<1>); // same contents as ra::Big<int, 2> a({1, 3, 2}, {1, 2, 3, 4, 5, 6})
 @end verbatim
 @end example
 
@@ -736,7 +736,7 @@ In addition to the special objects listed above, you can also omit any trailing 
 
 @example
 @verbatim
-ra::Owned<int, 3> a({2, 2, 2}, {1, 2, 3, 4, 5, 6, 7, 8});
+ra::Big<int, 3> a({2, 2, 2}, {1, 2, 3, 4, 5, 6, 7, 8});
 auto a0 = a(0); // same as a(0, ra::all, ra::all)
 auto a10 = a(1, 0); // same as a(1, 0, ra::all)
 @end verbatim
@@ -759,11 +759,11 @@ This supports the notion (@pxref{Rank polymorphism}) that a 3-array is also an 2
 
 @example
 @verbatim
-ra::Owned<int, 1> v = {1, 2, 3};
+ra::Big<int, 1> v = {1, 2, 3};
 cout << (v - ra::_0) << endl; // { 1-0, 2-1, 3-2 }
 // cout << (ra::_0) << endl; // error: TensorIndex cannot drive array expression
 // cout << (v - ra::_1) << endl; // error: TensorIndex cannot drive array expression
-ra::Owned<int, 2> a({3, 2}, 0);
+ra::Big<int, 2> a({3, 2}, 0);
 cout << (a + ra::_0 - ra::_1) << endl; // {{0, -1, -2}, {1, 0, -1}, {2, 1, 0}}
 @end verbatim
 @end example
@@ -805,9 +805,9 @@ A standard example is `outer product'.
 
 @example
 @verbatim
-ra::Owned<int, 1> a = {1, 2, 3};
-ra::Owned<int, 1> b = {40, 50};
-ra::Owned<int, 2> axb = map(ra::wrank<0, 1>([](auto && a, auto && b) { return a*b; }),
+ra::Big<int, 1> a = {1, 2, 3};
+ra::Big<int, 1> b = {40, 50};
+ra::Big<int, 2> axb = map(ra::wrank<0, 1>([](auto && a, auto && b) { return a*b; }),
                             a, b)
 @end verbatim
 @result{} axb = @{@{40, 80, 120@}, @{50, 100, 150@}@}
@@ -844,9 +844,9 @@ This use of the rank conjunction is packaged in @code{ra::} as the @ref{x-from,@
 
 @example
 @verbatim
-ra::Owned<int, 1> a = {1, 2, 3};
-ra::Owned<int, 1> b = {40, 50};
-ra::Owned<int, 2> axb = from([](auto && a, auto && b) { return a*b; }), a, b)
+ra::Big<int, 1> a = {1, 2, 3};
+ra::Big<int, 1> b = {40, 50};
+ra::Big<int, 2> axb = from([](auto && a, auto && b) { return a*b; }), a, b)
 @end verbatim
 @result{} axb = @{@{40, 80, 120@}, @{50, 100, 150@}@}
 @end example
@@ -885,9 +885,9 @@ The final operation is a standard operation on arrays of scalars. In actual @cod
 
 @example @c [ma103]
 @verbatim
-ra::Owned A({3, 2}, {1, 2, 3, 4, 5, 6});
-ra::Owned B({2, 3}, {7, 8, 9, 10, 11, 12});
-ra::Owned C({3, 3}, 0.);
+ra::Big A({3, 2}, {1, 2, 3, 4, 5, 6});
+ra::Big B({2, 3}, {7, 8, 9, 10, 11, 12});
+ra::Big C({3, 3}, 0.);
 for_each(ra::wrank<1, 1, 2>(ra::wrank<1, 0, 1>([](auto && c, auto && a, auto && b) { c += a*b; })), C, A, B);
 @end verbatim
 @result{} C = @{@{27, 30, 33@}, @{61, 68, 75@}, @{95, 106, 117@}@}
@@ -948,7 +948,7 @@ Compare:
 @verbatim
 int p[] = {1, 2, 3};
 int * z = p;
-ra::Owned<int, 1> q {1, 2, 3};
+ra::Big<int, 1> q {1, 2, 3};
 q += p; // ok, q is ra::, p is foreign object with size info
 ra::start(p) += q; // can't redefine operator+=(int[]), foreign needs ra::start()
 // z += q; // error: raw pointer needs ra::ptr()
@@ -981,7 +981,7 @@ For @ref{Containers and views,containers} @code{begin()} provides @code{RandomAc
 
 @example @c [ma106]
 @verbatim
-ra::Owned<int> x {3, 2, 1}; // x is a Container
+ra::Big<int> x {3, 2, 1}; // x is a Container
 auto y = x(); // y is a View on x
 // std::sort(y.begin(), y.end()); // error: y.begin() is not RandomAccessIterator
 std::sort(x.begin(), x.end());
@@ -1009,7 +1009,7 @@ FIXME Guile example
 @example
 @verbatim
 struct W { int x; }
-ra::Owned<W, 2> w({2, 2}, { {4}, {2}, {1}, {3} });
+ra::Big<W, 2> w({2, 2}, { {4}, {2}, {1}, {3} });
 cout << W(1, 1).x << endl;
 cout << amin(map([](auto && x) { return w.x; }, w)) << endl;
 @end verbatim
@@ -1093,8 +1093,8 @@ You don't need to use @ref{Array operations,@code{map}} every time you want to d
 
 @example
 @verbatim
-ra::Owned<double> x ...
-ra::Owned<double> y = where(x>0, expensive_expr_1(x), expensive_expr_2(x));
+ra::Big<double> x ...
+ra::Big<double> y = where(x>0, expensive_expr_1(x), expensive_expr_2(x));
 @end verbatim
 @end example
 
@@ -1102,7 +1102,7 @@ Here @code{expensive_expr_1} and @code{expensive_expr_2} are array expressions. 
 
 @example
 @verbatim
-ra::Owned<double> y = map([](auto && w, auto && t, auto && f) -> decltype(auto) { return w ? t : f; }
+ra::Big<double> y = map([](auto && w, auto && t, auto && f) -> decltype(auto) { return w ? t : f; }
                           x>0, expensive_expr_1(x), expensive_function_2(x));
 @end verbatim
 @end example
@@ -1112,9 +1112,9 @@ If the expressions have side effects, then @code{map} won't even give the right 
 @c [ma109]
 @example
 @verbatim
-ra::Owned<int, 1> o = {};
-ra::Owned<int, 1> e = {};
-ra::Owned<int, 1> n = {1, 2, 7, 9, 12};
+ra::Big<int, 1> o = {};
+ra::Big<int, 1> e = {};
+ra::Big<int, 1> n = {1, 2, 7, 9, 12};
 ply(where(odd(n), map([&o](auto && x) { o.push_back(x); }, n), map([&e](auto && x) { e.push_back(x); }, n)));
 cout << "o: " << format_array(o, false) << ", e: " << format_array(e, false) << endl;
 @end verbatim
@@ -1202,7 +1202,7 @@ FIXME
 @section Assignment to views
 
 FIXME
-With large containers (e.g. @code{Owned}), @code{operator=} replaces the lhs instead of writing over its contents. This behavior is inconsistent with @code{View::operator=} and is there only so that istream >> container may work; do not rely on it.
+With large containers (e.g. @code{Big}), @code{operator=} replaces the lhs instead of writing over its contents. This behavior is inconsistent with @code{View::operator=} and is there only so that istream >> container may work; do not rely on it.
 
 @section Array iterators and temporaries
 
@@ -1286,7 +1286,7 @@ Create an array expression that applies @var{op} to @var{expr} ...
 For example:
 @example
 @verbatim
-ra::Owned<double, 1> x = map(cos, ra::Small<double, 1> {0.});
+ra::Big<double, 1> x = map(cos, ra::Small<double, 1> {0.});
 @end verbatim
 @result{} x = @{ 1. @}
 @end example
@@ -1295,9 +1295,9 @@ ra::Owned<double, 1> x = map(cos, ra::Small<double, 1> {0.});
 
 @example
 @verbatim
-ra::Owned<int, 2> x = {{3, 3}, 0.};
+ra::Big<int, 2> x = {{3, 3}, 0.};
 map([](auto && i, auto && j) -> int & { return x(i, j); },
-    ra::Owned<int, 1> {0, 1, 1, 2}, ra::Owned<int, 1> {1, 0, 2, 1})
+    ra::Big<int, 1> {0, 1, 1, 2}, ra::Big<int, 1> {1, 0, 2, 1})
   = 1;
 @end verbatim
 @result{} x = @{@{0, 1, 0@}, @{1, 0, 1@}, @{0, 1, 0@}@}
@@ -1363,7 +1363,7 @@ Create an array expression that selects @var{true_expr} if @var{pred_expr} is @c
 For example:
 @example
 @verbatim
-    ra::Owned<double, 1> s {1, -1, 3, 2};
+    ra::Big<double, 1> s {1, -1, 3, 2};
     s = where(s>=2, 2, s); // saturate s
 @end verbatim
   @result{} s = @{1, -1, 2, 2@}
@@ -1377,19 +1377,19 @@ Create outer product expression. This is defined as @math{E(i00, i01 ..., i10, i
 For example:
 @example
 @verbatim
-    ra::Owned<double, 1> a {1, 2, 3};
-    ra::Owned<double, 1> b {10, 20, 30};
-    ra::Owned<double, 2> axb = from([](auto && a, auto && b) { return a*b; }, a, b)
+    ra::Big<double, 1> a {1, 2, 3};
+    ra::Big<double, 1> b {10, 20, 30};
+    ra::Big<double, 2> axb = from([](auto && a, auto && b) { return a*b; }, a, b)
 @end verbatim
   @result{} axb = @{@{10, 20, 30@}, @{20, 40, 60@}, @{30, 60, 90@}@}
 @end example
 
 @example
 @verbatim
-    ra::Owned<int, 1> i {2, 1};
-    ra::Owned<int, 1> j {0, 1};
-    ra::Owned<double, 2> A({3, 2}, {1, 2, 3, 4, 5, 6});
-    ra::Owned<double, 2> Aij = from(A, i, j)
+    ra::Big<int, 1> i {2, 1};
+    ra::Big<int, 1> j {0, 1};
+    ra::Big<double, 2> A({3, 2}, {1, 2, 3, 4, 5, 6});
+    ra::Big<double, 2> Aij = from(A, i, j)
 @end verbatim
   @result{} Aij = @{@{6, 5@}, @{4, 3@}@}
 @end example
@@ -1403,9 +1403,9 @@ Look up @var{expr} at each element of @var{indices}, which shall be a multi-inde
 This can be used for sparse subscripting. For example:
 @example @c [ra30]
 @verbatim
-    ra::Owned<int, 2> A({3, 2}, {100, 101, 110, 111, 120, 121});
-    ra::Owned<ra::Small<int, 2>, 2> i({2, 2}, {{0, 1}, {2, 0}, {1, 0}, {2, 1}});
-    ra::Owned<int, 2> B = at(A, i);
+    ra::Big<int, 2> A({3, 2}, {100, 101, 110, 111, 120, 121});
+    ra::Big<ra::Small<int, 2>, 2> i({2, 2}, {{0, 1}, {2, 0}, {1, 0}, {2, 1}});
+    ra::Big<int, 2> B = at(A, i);
 @end verbatim
   @result{} B = @{@{101, 120@}, @{110, 121@}@}
 @end example
@@ -1488,7 +1488,7 @@ Generally one can mix these types with @code{ra::} expressions without needing @
 @example
 @verbatim
 std::vector<int> x = {1, 2, 3};
-ra::Owned<int, 1> y = {10, 20, 30};
+ra::Big<int, 1> y = {10, 20, 30};
 cout << (x+y) << endl; // same as ra::start(x)+y
 // x += y; // error: no mach for operator+=
 ra::start(x) += y; // ok
@@ -1508,8 +1508,8 @@ The resulting expression has rank 1 and undefined size. To traverse it, it must 
 @example
 @verbatim
 int p[] = {1, 2, 3};
-ra::Owned<int, 1> v3 {1, 2, 3};
-ra::Owned<int, 1> v4 {1, 2, 3, 4};
+ra::Big<int, 1> v3 {1, 2, 3};
+ra::Big<int, 1> v4 {1, 2, 3, 4};
 v3 += ra::ptr(p); // ok, shape (3): v3 = {2, 4, 6}
 v4 += ra::ptr(p); // error, shape (4): bad access to p[3]
 // cout << (ra::ptr(p)+ra::TensorIndex<0>{}) << endl; // ct error, expression has undefined shape
@@ -1526,7 +1526,7 @@ The primary use of this function is to bring a scalar object into the @code{ra::
 @example
 @verbatim
 struct W { int x; }
-ra::Owned<W, 1> w { {1}, {2}, {3} };
+ra::Big<W, 1> w { {1}, {2}, {3} };
 
 // error: no matching function for call to start(W)
 // for_each([](auto && a, auto && b) { cout << (a.x + b.x) << endl; }, w, W {7});
@@ -1546,7 +1546,7 @@ Since @code{scalar} produces an object with rank 0, it's also useful when dealin
 @verbatim
 using Vec2 = ra::Small<double, 2>;
 Vec2 x {-1, 1};
-ra::Owned<Vec2, 1> c { {1, 2}, {2, 3}, {3, 4} };
+ra::Big<Vec2, 1> c { {1, 2}, {2, 3}, {3, 4} };
 // c += x // error: x has shape (2) and c has shape (3)
 c += ra::scalar(x); // ok: scalar(x) has shape () and matches c.
 @end verbatim
@@ -1568,9 +1568,9 @@ Create iterator over the @var{k}-cells of @var{view}. If @var{k} is negative, it
 
 @example
 @verbatim
-ra::Owned<int, 2> c {{1, 3, 2}, {7, 1, 3}};
+ra::Big<int, 2> c {{1, 3, 2}, {7, 1, 3}};
 cout << "max of each row: " << map([](auto && a) { return amax(a); }, iter<1>(c)) << endl;
-ra::Owned<int, 1> m({3}, 0);
+ra::Big<int, 1> m({3}, 0);
 scalar(m) = max(scalar(m), iter<1>(c));
 cout << "max of each column: " << m << endl;
 m = 0;
@@ -1601,7 +1601,7 @@ The following example computes the trace of each of the items [(-1)-cells] of @c
 
 @example
 @verbatim
-ra::Owned<int, 2> c = ra::_0 - ra::_1 - 2*ra::_2;
+ra::Big<int, 2> c = ra::_0 - ra::_1 - 2*ra::_2;
 cout << "c: " << c << endl;
 cout << "s: " << map([](auto && a) { return sum(diag(a)); }, iter<-1>(c)) << endl;
 @end verbatim

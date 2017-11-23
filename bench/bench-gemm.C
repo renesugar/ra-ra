@@ -17,7 +17,7 @@
 #include "ra/test.H"
 #include "ra/complex.H"
 #include "ra/format.H"
-#include "ra/large.H"
+#include "ra/big.H"
 #include "ra/operators.H"
 #include "ra/io.H"
 #include "ra/bench.H"
@@ -119,7 +119,7 @@ gemm_blas_3(ra::View<double, 2> const & A, ra::View<double, 2> const & B, ra::Vi
 inline auto
 gemm_blas(ra::View<double, 2> const & a, ra::View<double, 2> const & b)
 {
-    ra::Owned<decltype(a(0, 0)*b(0, 0)), 2> c({a.size(0), b.size(1)}, 0.);
+    ra::Big<decltype(a(0, 0)*b(0, 0)), 2> c({a.size(0), b.size(1)}, 0.);
     gemm_blas_3(a, b, c);
     return c;
 }
@@ -131,7 +131,7 @@ int main()
 
     auto gemm_block = [&](auto const & a, auto const & b)
         {
-            ra::Owned<decltype(a(0, 0)*b(0, 0)), 2> c({a.size(0), b.size(1)}, 0.);
+            ra::Big<decltype(a(0, 0)*b(0, 0)), 2> c({a.size(0), b.size(1)}, 0.);
             gemm_block_3(a, b, c);
             return c;
         };
@@ -140,7 +140,7 @@ int main()
         {
             dim_t const M = a.size(0);
             dim_t const N = b.size(1);
-            ra::Owned<decltype(a(0, 0)*b(0, 0)), 2> c({M, N}, ra::unspecified);
+            ra::Big<decltype(a(0, 0)*b(0, 0)), 2> c({M, N}, ra::unspecified);
             for (dim_t i=0; i<M; ++i) {
                 for (dim_t j=0; j<N; ++j) {
                     c(i, j) = dot(a(i), b(ra::all, j));
@@ -155,7 +155,7 @@ int main()
         {
             dim_t const M = a.size(0);
             dim_t const N = b.size(1);
-            ra::Owned<decltype(a(0, 0)*b(0, 0)), 2> c({M, N}, ra::unspecified);
+            ra::Big<decltype(a(0, 0)*b(0, 0)), 2> c({M, N}, ra::unspecified);
             for_each(ra::wrank<1, 1, 2>(ra::wrank<1, 0, 1>([](auto && c, auto && a, auto && b) { c += a*b; })),
                      c, a, b);
             return c;
@@ -168,7 +168,7 @@ int main()
             dim_t const N = b.size(1);                      \
             dim_t const K = a.size(1);                      \
             using T = decltype(a(0, 0)*b(0, 0));            \
-            ra::Owned<T, 2> c({M, N}, ra::unspecified);     \
+            ra::Big<T, 2> c({M, N}, ra::unspecified);     \
             T * RESTRICT cc = c.data();                     \
             T const * RESTRICT aa = a.data();               \
             T const * RESTRICT bb = b.data();               \
@@ -188,7 +188,7 @@ int main()
             dim_t const N = b.size(1);                      \
             dim_t const K = a.size(1);                      \
             using T = decltype(a(0, 0)*b(0, 0));            \
-            ra::Owned<T, 2> c({M, N}, ra::unspecified);     \
+            ra::Big<T, 2> c({M, N}, ra::unspecified);     \
             T * RESTRICT cc = c.data();                     \
             T const * RESTRICT aa = a.data();               \
             T const * RESTRICT bb = b.data();               \
@@ -209,10 +209,10 @@ DEFINE_GEMM_RESTRICT(gemm_k_raw_restrict, gemm_ij_raw_restrict, __restrict__)
         {
             auto bench = [&](auto && f, char const * tag)
             {
-                ra::Owned<real, 2> a({m, p}, ra::_0-ra::_1);
-                ra::Owned<real, 2> b({p, n}, ra::_1-2*ra::_0);
-                ra::Owned<real, 2> ref = gemm(a, b);
-                ra::Owned<real, 2> c;
+                ra::Big<real, 2> a({m, p}, ra::_0-ra::_1);
+                ra::Big<real, 2> b({p, n}, ra::_1-2*ra::_0);
+                ra::Big<real, 2> ref = gemm(a, b);
+                ra::Big<real, 2> c;
 
                 auto bv = Benchmark().repeats(reps).runs(3).run([&]() { c = f(a, b); });
                 tr.info(std::setw(5), std::fixed, Benchmark::avg(bv)/(m*n*p)/1e-9, " ns [",

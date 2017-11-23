@@ -48,10 +48,10 @@ int main()
     }
     tr.section("var size");
     {
-        ra::Owned<int, 1> a = {1, 2, 3};
-        ra::Owned<int, 1> b = {4, 5, 6};
+        ra::Big<int, 1> a = {1, 2, 3};
+        ra::Big<int, 1> b = {4, 5, 6};
         using K = ra::concrete_type<decltype(a+b)>;
-        tr.test(std::is_same<K, ra::Owned<int, 1>>::value);
+        tr.test(std::is_same<K, ra::Big<int, 1>>::value);
         auto c = concrete(a+b);
         tr.test(std::is_same<decltype(c), K>::value);
         tr.test_eq(a+b, c);
@@ -59,7 +59,7 @@ int main()
     tr.section("var size + fixed size");
     {
         ra::Small<int, 3, 2> a = {1, 2, 3, 4, 5, 6};
-        ra::Owned<int, 1> b = {4, 5, 6};
+        ra::Big<int, 1> b = {4, 5, 6};
         using K = ra::concrete_type<decltype(a+b)>;
         tr.test(std::is_same<K, ra::Small<int, 3, 2>>::value);
         auto c = concrete(a+b);
@@ -68,11 +68,11 @@ int main()
     }
     tr.section("var size + var rank");
     {
-        ra::Owned<int, 1> a = {1, 2, 3};
-        ra::Owned<int> b = {4, 5, 6};
+        ra::Big<int, 1> a = {1, 2, 3};
+        ra::Big<int> b = {4, 5, 6};
         using K = ra::concrete_type<decltype(a+b)>;
 // ra:: b could be higher rank and that decides the type.
-        tr.test(std::is_same<K, ra::Owned<int>>::value);
+        tr.test(std::is_same<K, ra::Big<int>>::value);
         auto c = concrete(a+b);
         tr.test(std::is_same<decltype(c), K>::value);
         tr.test_eq(a+b, c);
@@ -91,10 +91,10 @@ int main()
     }
     tr.section("concrete on is_slice var size");
     {
-        ra::Owned<int, 1> a = {1, 2, 3};
+        ra::Big<int, 1> a = {1, 2, 3};
         auto c = concrete(a);
         using K = decltype(c);
-        tr.test(std::is_same<K, ra::Owned<int, 1>>::value);
+        tr.test(std::is_same<K, ra::Big<int, 1>>::value);
         tr.test(std::is_same<decltype(c), K>::value);
         tr.test_eq(a, c);
         a = 99;
@@ -106,7 +106,7 @@ int main()
         std::vector<int> a = {1, 2, 3};
         auto c = ra::concrete(a);
         using K = decltype(c);
-        tr.test(std::is_same<K, ra::Owned<int, 1>>::value);
+        tr.test(std::is_same<K, ra::Big<int, 1>>::value);
         tr.test(std::is_same<decltype(c), K>::value);
         tr.test_eq(a, c);
         ra::start(a) = 99;

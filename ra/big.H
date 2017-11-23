@@ -6,7 +6,7 @@
 // Software Foundation; either version 3 of the License, or (at your option) any
 // later version.
 
-/// @file large.H
+/// @file big.H
 /// @brief Arrays with dynamic size.
 
 #pragma once
@@ -385,7 +385,7 @@ struct WithStorage: public View<std::decay_t<decltype(*storage_traits<Store>::da
         static_cast<View &>(*this) = x;
     }
 // FIXME use of fill1 requires T to be copiable, this is unfortunate as it conflicts with the semantics of View::operator=.
-// store(x) avoids it for Owned, but doesn't work for Unique. Should construct in place as std::vector does.
+// store(x) avoids it for Big, but doesn't work for Unique. Should construct in place as std::vector does.
     WithStorage(std::initializer_list<T> const x): WithStorage({dim_t(x.size())}, unspecified)
     {
         static_assert(RANK==RANK_ANY || RANK==1, "rank mismatch with init list (of rank 1)");
@@ -481,7 +481,7 @@ void swap(WithStorage<Store, RANK> & a, WithStorage<Store, RANK> & b)
 
 // Beyond this, we probably should have fixed-size (~std::dynarray), resizeable (~std::vector).
 template <class T, rank_t RANK=RANK_ANY> using Unique = WithStorage<std::unique_ptr<T []>, RANK>;
-template <class T, rank_t RANK=RANK_ANY> using Owned = WithStorage<std::vector<T>, RANK>;
+template <class T, rank_t RANK=RANK_ANY> using Big = WithStorage<std::vector<T>, RANK>;
 template <class T, rank_t RANK=RANK_ANY> using Shared = WithStorage<std::shared_ptr<T>, RANK>;
 
 // -------------

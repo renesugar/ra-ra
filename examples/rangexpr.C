@@ -9,7 +9,7 @@ using std::cout; using std::endl;
 
 int main()
 {
-    ra::Owned<float, 1> x = cos(ra::iota(8) * (2.0 * PI / 8));
+    ra::Big<float, 1> x = cos(ra::iota(8) * (2.0 * PI / 8));
     cout << x << endl;
 
     return 0;
