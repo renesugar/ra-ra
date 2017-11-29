@@ -127,7 +127,7 @@ FOR_EACH(DEF_UNARY_OP, !, +, -) // TODO Make + into nop.
 FOR_EACH(DEF_NAME_OP, rel_error, pow, xI, conj, sqr, sqrm, sqrt, cos, sin)
 FOR_EACH(DEF_NAME_OP, exp, expm1, log, log1p, log10, isfinite, isnan, isinf)
 FOR_EACH(DEF_NAME_OP, max, min, abs, odd, asin, acos, atan, atan2)
-FOR_EACH(DEF_NAME_OP, cosh, sinh, tanh)
+FOR_EACH(DEF_NAME_OP, cosh, sinh, tanh, clamp)
 #undef DEF_NAME_OP
 
 #define DEF_NAME_OP(OP)                                                 \
