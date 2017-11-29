@@ -21,7 +21,7 @@
 #include "ra/io.H"
 #include "ra/bench.H"
 
-using std::cout; using std::endl; using std::setw; using std::setprecision;
+using std::cout; using std::endl; using std::setw; using std::setprecision; using ra::ALINF;
 using ra::Small; using ra::View; using ra::Unique; using ra::ra_traits; using ra::dim_t;
 using real = double;
 
