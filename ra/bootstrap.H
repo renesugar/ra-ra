@@ -29,6 +29,8 @@
 
 namespace ra {
 
+constexpr int VERSION = 4;
+
 static_assert(sizeof(int)>=4, "bad assumption on int");
 using rank_t = int;
 using dim_t = ssize_t;
