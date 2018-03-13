@@ -36,7 +36,7 @@ constexpr double SQRTPI = sqrt(PI);
 constexpr double   LNPI = log(PI);
 constexpr double     C0 = 2.99792458e8;
 constexpr double     M0 = (4e-7)*PI;
-constexpr double     E0 = 1./(sqrt(M0)*C0*C0);
+constexpr double     E0 = 1./(M0*C0*C0);
 constexpr double  ECHAR = 1.602176487e-19;
 constexpr double  EMASS = 9.10938215e-31;
 constexpr double     Z0 = 376.730313461;
@@ -56,6 +56,8 @@ using std::sqrt;
 using std::swap;
 using std::isfinite;
 using std::isinf;
+using std::pow;
+using std::exp;
 
 template <class T> inline constexpr T clamp(T const & a, T const & lo, T const & hi)
 {

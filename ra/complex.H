@@ -32,9 +32,9 @@ template <class T> constexpr bool is_scalar_def<std::complex<T>> = true;
     inline constexpr R & imag_part(C & z)          { return reinterpret_cast<R *>(&z)[1]; } \
     inline constexpr R sqrm(C const x)             { return sqrm(x.real())+sqrm(x.imag()); } \
     inline constexpr R sqrm(C const x, C const y)  { return sqrm(x.real()-y.real())+sqrm(x.imag()-y.imag()); } \
-    inline constexpr R norm2(C const x)            { return hypot(x.real(), x.imag()); } \
-    inline constexpr R norm2(C const x, C const y) { return sqrt(sqrm(x, y)); } \
-    inline constexpr R abs(C const x, C const y)   { return sqrt(sqrm(x, y)); } \
+    inline constexpr R norm2(C const x)            { return std::hypot(x.real(), x.imag()); } \
+    inline constexpr R norm2(C const x, C const y) { return std::sqrt(sqrm(x, y)); } \
+    inline constexpr R abs(C const x, C const y)   { return std::sqrt(sqrm(x, y)); } \
     inline C sqr(C const x)                        { return x*x; }      \
     inline C dot(C const x, C const y)             { return x*y; }
 FOR_FLOAT(double, std::complex<double>);
